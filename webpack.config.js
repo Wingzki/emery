@@ -11,6 +11,7 @@ module.exports = {
   },
   module: {
     loaders: [
+      { test: /\.js$/, include: /linebreak/, loader: "transform/cacheable?brfs" },
       { test: /\.js$/, exclude: /node_modules/, loader: 'babel?sourceMap' },
       { test: /\.json$/,loader: 'json' },
       // { test: /\.scss$/, loader: 'style!css?sourceMap!resolve-url?sourceMap!sass?sourceMap' },

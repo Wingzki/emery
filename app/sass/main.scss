@@ -1,0 +1,44 @@
+@import "~bootstrap-sass/assets/stylesheets/_bootstrap.scss";
+
+body {
+  background: #EEE;
+}
+
+.main {
+  margin-top: 200px;
+}
+
+.left-side, .right-side, .preview, .buttons {
+  float: left;
+  width: 50%;
+}
+
+.left-side {
+  padding-left: 200px;
+  padding-right: 50px;
+}
+
+.right-side {
+  padding-left: 50px;
+  margin-top: 15px;
+  border-left: solid 1px #CCC;
+
+  .preview {
+    background: #FFF;
+    margin: 10px 0;
+  }
+
+  .overlays {
+    position: relative;
+    top: 93px;
+    left: 69px;
+
+    border: dashed 1px #F66;
+    width: 105px;
+    height: 126px;
+  }
+
+  .buttons {
+    margin: 20px 0 0 20px;
+  }
+}
