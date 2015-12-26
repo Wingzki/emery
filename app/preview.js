@@ -1,6 +1,17 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import ReactCanvas, { Surface, Image, Text, FontFace, measureText } from 'react-canvas'
+import ReactCanvas, { Surface, Image, Text, FontFace, Group, measureText } from 'react-canvas'
+
+import thumbnailer from './thumbnailer'
+
+const FontSize = 14,
+      LineHeight = 19,
+      MarginX = 15,
+      MarginY = 20,
+      Width = 159,
+      Height = 189,
+      FontColor = '#393E45',
+      HighlightFontColor = '#FF6666'
 
 function measureTextByStyle(text, style) {
   return measureText(text, style.width, style.fontFace || FontFace.Default(),
@@ -10,20 +21,8 @@ function measureTextByStyle(text, style) {
 function measureImage(url, callback) {
   let image = document.createElement("img")
   image.src = url
-  image.onload = function() {
-    callback({ width: this.width, height: this.height })
-  }
+  image.onload = callback
 }
-
-const FontSize = 14,
-      LineHeight = 19,
-      MarginY = 20,
-      MarginX = 15,
-      Width = 159,
-      Height = 189,
-      FontColor = '#393E45',
-      HighlightFontColor = '#FF6666',
-      ImageWidth = 105
 
 export default class Preview extends React.Component {
 
@@ -40,11 +39,19 @@ export default class Preview extends React.Component {
   }
 
   measureImage() {
-    const image = this.props.image
+    const image = this.props.image,
+          self = this
     if (image) {
-      measureImage(image, (imageMetrics) => {
-        this.setState({ ratio: imageMetrics.height / imageMetrics.width })
+      measureImage(image, function() {
+        var canvas = document.createElement("canvas")
+        thumbnailer(canvas, this, Width, 1)
+
+        var image = canvas.toDataURL("image/png")
+
+        self.setState({ ratio: this.height / this.width, image })
       })
+    } else {
+      self.setState({ image: null })
     }
   }
 
@@ -52,18 +59,18 @@ export default class Preview extends React.Component {
     let canvas = ReactDOM.findDOMNode(this.refs.surface.refs.canvas)
     let anchor = document.createElement("a")
     anchor.href = canvas.toDataURL("image/png")
-    anchor.download = "preview.png"
+    anchor.download = `${this.props.exportFilename}.jpg`
     anchor.click()
   }
 
   calculateStyles() {
-    const { advertise, price, image, width, right, bottom } = this.props
+    const { advertise, price, width, right, bottom } = this.props
 
-    let imageWidth = ImageWidth
-    let imageHeight = ImageWidth * this.state.ratio
+    let imageWidth = this.props.imageWidth
+    let imageHeight = imageWidth * this.state.ratio
     let imageStyle = this.imageStyle = {
-      top: Height - imageHeight + MarginY,
-      left: Width - imageWidth + MarginX,
+      top: this.props.imageCenterY - imageHeight / 2,
+      left: this.props.imageCenterX - imageWidth / 2,
       width: imageWidth,
       height: imageHeight
     }
@@ -75,7 +82,8 @@ export default class Preview extends React.Component {
       top: MarginY,
       left: MarginX,
       width: Width,
-      height: LineHeight * 2
+      height: LineHeight * 2,
+      zIndex: 1
     }
 
     let advertiseMetrics = measureTextByStyle(advertise, advertiseStyle)
@@ -89,7 +97,8 @@ export default class Preview extends React.Component {
       top: MarginY + advertiseMetrics.height,
       left: MarginX,
       width: Width,
-      height: LineHeight
+      height: LineHeight,
+      zIndex: 1
     }
 
     let priceMetrics = measureTextByStyle(price, priceStyle)
@@ -101,13 +110,17 @@ export default class Preview extends React.Component {
       top: MarginY + advertiseMetrics.height,
       left: MarginX + priceMetrics.width,
       width: Width - priceMetrics.width,
-      height: LineHeight
+      height: LineHeight,
+      zIndex: 1
     }
   }
 
   render() {
     this.calculateStyles()
-    const { advertise, price, image } = this.props
+    const { advertise, price } = this.props,
+          image = this.state.image,
+          width = Width + MarginX * 2,
+          height = Height + MarginY * 2
 
     return (
       <Surface
@@ -115,27 +128,38 @@ export default class Preview extends React.Component {
         className="preview"
         top={0}
         left={0}
-        width={189}
-        height={229}
+        width={width}
+        height={height}
         >
 
-        <Text style={this.advertiseStyle}>
-          {advertise}
-        </Text>
+        <Group style={{
+          top: 0,
+          left: 0,
+          width: width,
+          height: height,
+          backgroundColor: 'white'
+        }}>
 
-        <Text style={this.priceStyle}>
-          {price}
-        </Text>
+          {image &&
+            <Image key={image} src={image} style={this.imageStyle}/>
+          }
 
-        {price &&
-          <Text style={this.priceSuffixStyle}>
-            分
+          <Text style={this.advertiseStyle}>
+            {advertise}
           </Text>
-        }
 
-        {image &&
-          <Image key={image} src={image} style={this.imageStyle}/>
-        }
+          <Text style={this.priceStyle}>
+            {price}
+          </Text>
+
+          {price &&
+            <Text style={this.priceSuffixStyle}>
+              分
+            </Text>
+          }
+
+        </Group>
+
       </Surface>
     )
   }

@@ -9,22 +9,21 @@ import ReactBootstrap, { Input, Button, ButtonGroup } from 'react-bootstrap'
 class App extends React.Component {
 
   state = {
-    width: 135,
-    right: 0,
-    bottom: 0
+    imageCenterX: 122,
+    imageCenterY: 143,
+    imageWidth: 135,
+    exportFilename: "preview"
   }
 
   handleZoom(offset) {
-    const width = this.state.width + offset,
-          right = this.state.right - offset / 2,
-          bottom = this.state.bottom - offset / 2
-    this.setState({ width, right, bottom })
+    const imageWidth = this.state.imageWidth + offset
+    this.setState({ imageWidth })
   }
 
   handleScroll(offsetX, offsetY) {
-    const right = this.state.right + offsetX,
-          bottom = this.state.bottom + offsetY
-    this.setState({ right, bottom })
+    const imageCenterX = this.state.imageCenterX + offsetX,
+          imageCenterY = this.state.imageCenterY + offsetY
+    this.setState({ imageCenterX, imageCenterY })
   }
 
   handleChange(event) {
@@ -68,12 +67,6 @@ class App extends React.Component {
             onChange={::this.handleChangeFile}
             label="3. 导入图片"
             />
-          <Input
-            type="text"
-            name="image"
-            onChange={::this.handleChange}
-            placeholder="输入网址：http://"
-            />
         </div>
 
         <div className="right-side">
@@ -81,19 +74,26 @@ class App extends React.Component {
 
           <div className="buttons">
             <ButtonGroup>
-              <Button onClick={this.handleZoom.bind(this, 10)}>放大</Button>
-              <Button onClick={this.handleZoom.bind(this, -10)}>缩小</Button>
+              <Button onClick={this.handleZoom.bind(this, 5)}>放大</Button>
+              <Button onClick={this.handleZoom.bind(this, -5)}>缩小</Button>
             </ButtonGroup>
           </div>
           <div className="buttons">
             <ButtonGroup>
-              <Button onClick={this.handleScroll.bind(this, 0, 10)}>上</Button>
-              <Button onClick={this.handleScroll.bind(this, 0, -10)}>下</Button>
-              <Button onClick={this.handleScroll.bind(this, 10, 0)}>左</Button>
-              <Button onClick={this.handleScroll.bind(this, -10, 0)}>右</Button>
+              <Button onClick={this.handleScroll.bind(this, 0, -2)}>上</Button>
+              <Button onClick={this.handleScroll.bind(this, 0, 2)}>下</Button>
+              <Button onClick={this.handleScroll.bind(this, -2, 0)}>左</Button>
+              <Button onClick={this.handleScroll.bind(this, 2, 0)}>右</Button>
             </ButtonGroup>
           </div>
           <div className="buttons">
+            <Input
+              type="text"
+              name="exportFilename"
+              onChange={::this.handleChange}
+              placeholder="文件名"
+              label="4. 导出图片"
+              />
             <ButtonGroup>
               <Button onClick={::this.handleSave}>导出</Button>
             </ButtonGroup>
