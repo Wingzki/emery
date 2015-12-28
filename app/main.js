@@ -4,6 +4,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import Preview from './preview'
 
+import Dropzone from 'react-dropzone'
 import ReactBootstrap, { Input, Button, ButtonGroup } from 'react-bootstrap'
 
 class App extends React.Component {
@@ -31,10 +32,9 @@ class App extends React.Component {
     this.setState({ [target.name]: target.value })
   }
 
-  handleChangeFile(event) {
-    const target = event.target
-    const url = window.URL.createObjectURL(target.files[0])
-    this.setState({ [target.name]: url })
+  handleChangeImage(files) {
+    const url = window.URL.createObjectURL(files[0])
+    this.setState({ image: url })
   }
 
   handleSave() {
@@ -61,12 +61,19 @@ class App extends React.Component {
             placeholder="0"
             label="2. 输入分值"
             />
-          <Input
-            type="file"
-            name="image"
-            onChange={::this.handleChangeFile}
-            label="3. 导入图片"
-            />
+          <div className="form-group">
+            <label className="control-label">
+              3. 导入图片
+            </label>
+            <Dropzone
+              className="dropzone"
+              activeClassName="active"
+              onDrop={::this.handleChangeImage}
+              multiple={false}
+              >
+              <span>点击或拖拽文件到此处</span>
+            </Dropzone>
+          </div>
         </div>
 
         <div className="right-side">

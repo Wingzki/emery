@@ -58,7 +58,7 @@ export default class Preview extends React.Component {
   save() {
     let canvas = ReactDOM.findDOMNode(this.refs.surface.refs.canvas)
     let anchor = document.createElement("a")
-    anchor.href = canvas.toDataURL("image/png")
+    anchor.href = canvas.toDataURL("image/jpeg")
     anchor.download = `${this.props.exportFilename}.jpg`
     anchor.click()
   }
@@ -76,6 +76,7 @@ export default class Preview extends React.Component {
     }
 
     let advertiseStyle = this.advertiseStyle = {
+      fontFace: FontFace("Microsoft YaHei"),
       fontSize: FontSize,
       lineHeight: LineHeight,
       color: FontColor,
@@ -91,6 +92,7 @@ export default class Preview extends React.Component {
       advertiseMetrics.height = LineHeight * 2
 
     let priceStyle = this.priceStyle = {
+      fontFace: FontFace("Microsoft YaHei"),
       fontSize: FontSize,
       lineHeight: LineHeight,
       color: HighlightFontColor,
@@ -104,6 +106,7 @@ export default class Preview extends React.Component {
     let priceMetrics = measureTextByStyle(price, priceStyle)
 
     let priceSuffixStyle = this.priceSuffixStyle = {
+      fontFace: FontFace("Microsoft YaHei"),
       fontSize: FontSize,
       lineHeight: LineHeight,
       color: FontColor,
@@ -152,11 +155,9 @@ export default class Preview extends React.Component {
             {price}
           </Text>
 
-          {price &&
-            <Text style={this.priceSuffixStyle}>
-              分
-            </Text>
-          }
+          <Text style={this.priceSuffixStyle}>
+            分
+          </Text>
 
         </Group>
 
