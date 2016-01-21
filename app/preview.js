@@ -133,6 +133,7 @@ export default class Preview extends React.Component {
         left={0}
         width={width}
         height={height}
+        scale={1}
         >
 
         <Group style={{
